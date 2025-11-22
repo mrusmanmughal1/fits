@@ -6,19 +6,18 @@ import { BRANDS } from '@/constants';
 
 export const Brands: React.FC = () => {
   return (
-    <section className="py-16 bg-gray-50">
-      <div className="container mx-auto px-4">
+    <section className="py-16  ">
+      <div className="container  bg-neutral-200 py-10  mx-auto px-4">
         <Marquee
           speed={50}
           gradient={true}
-          gradientColor="rgb(249, 250, 251)"
-          gradientWidth={100}
+          gradientWidth={0.5}
           pauseOnHover={true}
         >
           {BRANDS.map((brand, index) => (
             <div
               key={index}
-              className="bg-white px-12 py-4 rounded-lg shadow-sm hover:shadow-md text-2xl transition-shadow font-semibold text-gray-700 mx-4"
+              className="bg-white px-12 py-4 my-4 rounded-2xl shadow-md hover:shadow-md text-2xl transition-shadow font-semibold text-gray-700 mx-4"
             >
               {brand}
             </div>

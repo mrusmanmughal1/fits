@@ -55,7 +55,7 @@ export const Newsletter: React.FC = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Your email address"
-                  className=" w-3/4 mx-auto px-4 py-3 rounded-lg bg-accent border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                  className=" w-3/4 mx-auto px-4 py-3 rounded-lg bg-accent border border-gray-200 text-gray-700 placeholder-gray-400 focus:outline-none   focus:ri  focus:border-transparent"
                   required
                 />
                 <Button

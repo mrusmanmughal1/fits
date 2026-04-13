@@ -1,4 +1,4 @@
 // Custom React Hooks
-// Example: export { useCart } from './useCart';
-// Example: export { useAuth } from './useAuth';
+export { useHoverSound } from './useHoverSound';
+export { useAuth } from "./useAuth";
 

@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Button } from '@/components/ui';
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui";
 
 interface Slide {
   id: number;
@@ -15,17 +15,17 @@ interface Slide {
 const slides: Slide[] = [
   {
     id: 1,
-    image: '/images/hero1.webp',
-    title: 'Power Beyond Limits',
-    subtitle: 'We break and fix your create dreams to all of your electronics',
-    buttonText: 'Shop Now',
+    image: "/images/hero1.webp",
+    title: "Power Beyond Limits",
+    subtitle: "We break and fix your create dreams to all of your electronics",
+    buttonText: "Shop Now",
   },
   {
     id: 2,
-    image: '/images/hero2.webp',
-    title: 'Innovation Meets Excellence',
-    subtitle: 'Discover the latest technology and premium electronics',
-    buttonText: 'Explore Now',
+    image: "/images/hero2.webp",
+    title: "Innovation   Excellence",
+    subtitle: "Discover the latest technology and premium electronics",
+    buttonText: "Shop Now",
   },
 ];
 
@@ -71,7 +71,7 @@ export const Hero: React.FC = () => {
           <div
             key={slide.id}
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-              index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+              index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
           >
             {/* Image */}
@@ -84,24 +84,24 @@ export const Hero: React.FC = () => {
                 className="object-cover"
                 sizes="100vw"
               />
-              
+
               {/* Overlay for better text readability */}
-              <div className="absolute inset-0 bg-black/10" />
-              
+              <div className="absolute inset-0 bg-gray/10" />
+
               {/* Text Content Overlay */}
-              <div className="absolute inset-0 flex items-center justify-center z-20">
+              <div className="absolute inset-0 flex  top-18 z-20">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-                  <div className="max-w-3xl mx-auto text-center text-white">
-                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 leading-tight drop-shadow-lg">
+                  <div className="max-w-3xl mx-auto text-center text-black">
+                    <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl font-semibold mb-2 sm:mb-2 leading-tight drop-shadow-md">
                       {slide.title}
                     </h1>
-                    <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-6 sm:mb-8 text-white/90 drop-shadow-md max-w-2xl mx-auto">
+                    <p className="text-base sm:text-lg md:text-xl lg:text-xl mb-2 sm:mb-8 text-black/90 drop-shadow-md max-w-2xl mx-auto">
                       {slide.subtitle}
                     </p>
                     <Button
-                      variant="outline"
+                      variant="primary"
                       size="lg"
-                      className="bg-white/10 backdrop-blur-sm border-2 border-white text-white hover:bg-white hover:text-primary transition-all duration-300 shadow-lg"
+                      className="  px-10 !py-2  border-primary border bg-transparent !text-primary  hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
                     >
                       {slide.buttonText}
                     </Button>
@@ -162,8 +162,8 @@ export const Hero: React.FC = () => {
             onClick={() => goToSlide(index)}
             className={`transition-all duration-300 rounded-full ${
               index === currentSlide
-                ? 'bg-white w-8 sm:w-10 h-2 sm:h-3'
-                : 'bg-white/50 w-2 sm:w-3 h-2 sm:h-3 hover:bg-white/75'
+                ? "bg-white w-8 sm:w-10 h-2 sm:h-3"
+                : "bg-white/50 w-2 sm:w-3 h-2 sm:h-3 hover:bg-white/75"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />
@@ -173,7 +173,7 @@ export const Hero: React.FC = () => {
       {/* Progress Bar */}
       {isAutoPlaying && (
         <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/20 z-30">
-          <div className="h-full bg-white animate-progress" />
+          <div className="h-full bg-accent animate-progress" />
         </div>
       )}
     </section>

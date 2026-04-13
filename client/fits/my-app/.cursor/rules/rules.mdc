@@ -1,0 +1,32 @@
+---
+alwaysApply: true
+---
+
+# Rule: Form Handling Standard
+
+**Always use Formik for handling forms** in React, Next.js, or any frontend in this project.
+
+### Requirements:
+
+- All forms must be implemented using **Formik** (`useFormik` or `<Formik>` component).
+- All form validation must be implemented using **Yup** schemas.
+- No React `useState` form handling unless explicitly requested.
+- No custom validation logic (use Yup validation schema).
+- When generating code:
+  - Provide Formik initialValues
+  - Provide Yup validationSchema
+  - Use Formik’s handleChange, handleSubmit, touched, and errors
+  - Use `<Field>` or controlled inputs via `formik.values`
+
+### Examples:
+
+```tsx
+const formik = useFormik({
+  initialValues: { email: '', password: '' },
+  validationSchema: Yup.object({
+    email: Yup.string().email().required(),
+    password: Yup.string().min(6).required(),
+  }),
+  onSubmit: (values) => { ... },
+});
+```

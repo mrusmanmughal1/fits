@@ -7,12 +7,20 @@ export interface Product {
   price: number;
   salePrice?: number;
   image: string | StaticImageData;
+  images?: (string | StaticImageData)[];
   imageAlt?: string;
   badge?: string;
   badgeVariant?: 'primary' | 'success' | 'error' | 'sale';
   description?: string;
   category?: string;
   inStock?: boolean;
+  brand?: string;
+  reference?: string;
+  condition?: string;
+  rating?: number;
+  colors?: { name: string; value: string }[];
+  sizes?: string[];
+  dimensions?: string[];
 }
 
 export interface BlogPost {
@@ -49,7 +57,7 @@ export interface User {
 }
 
 // Button variants
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost';
+export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning' | 'disabled';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 // Badge variants

@@ -8,6 +8,8 @@ interface ProductShowcaseProps {
   gradient?: string;
   image?: string;
   position?: string;
+  emoji?: string;
+  emojiCount?: number;
 }
 
 export const ProductShowcase: React.FC<ProductShowcaseProps> = ({
@@ -15,7 +17,9 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({
   gradient,
   image,
   subtitle,
-  position,
+  position = "",
+  emoji = "🎧",
+  emojiCount = 6,
 }) => {
   return (
     <div className="overflow-hidden">
@@ -39,7 +43,9 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({
               <div className="absolute inset-0 bg-black/10" />
             </div>
             {/* Content wrapper with relative positioning - stays static */}
-            <div className={`relative z-10 w-full flex flex-col lg:flex-row ${position}  gap-8 p-8 lg:p-12`}>
+            <div
+              className={`relative z-10 w-full flex flex-col lg:flex-row ${position}  gap-8 p-8 lg:p-12`}
+            >
               <div className=" ">
                 <p className="text-xl font-medium text-price mb-2">
                   {subtitle}
@@ -47,11 +53,7 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({
                 <h2 className="text-xl lg:text-4xl font-bold w-3/4  mb-4  ">
                   {title}
                 </h2>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  className="border-2 border-white text-white hover:bg-white hover:text-primary bg-white/10 backdrop-blur-sm"
-                >
+                <Button variant="outline" size="md" className="px-8">
                   Buy Now
                 </Button>
               </div>

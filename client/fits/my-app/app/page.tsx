@@ -1,6 +1,4 @@
 import {
-  Header,
-  Footer,
   Hero,
   ProductShowcase,
   Features,
@@ -88,12 +86,10 @@ const featuredProducts: Product[] = [
 export default function Home() {
   return (
     <div className="min-h-screen  ">
-      <Header />
-
       <Hero />
 
       {/* Product Showcases */}
-      <section className="py-4 bg-white overflow-hidden">
+      <section className="py-1 bg-white overflow-hidden">
         <div className="container mx-auto   space-y-4">
           <ProductShowcase
             title="Longer Battery Life Faster Charging"
@@ -178,8 +174,6 @@ export default function Home() {
       </section>
 
       <Newsletter />
-
-      <Footer />
     </div>
   );
 }

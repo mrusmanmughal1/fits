@@ -1,7 +1,7 @@
-'use client';
-import React from 'react';
-import { Product } from '@/types';
-import { ProductCard } from '@/components/features/ProductCard';
+"use client";
+import React from "react";
+import { Product } from "@/types";
+import { ProductCard } from "@/components/features/ProductCard";
 
 interface ProductGridProps {
   title: string;
@@ -9,7 +9,11 @@ interface ProductGridProps {
   description: string;
 }
 
-export const ProductGrid: React.FC<ProductGridProps> = ({ title, products,description }) => {
+export const ProductGrid: React.FC<ProductGridProps> = ({
+  title,
+  products,
+  description,
+}) => {
   return (
     <section className="py-16  ">
       <div className="container  text-center mx-auto px-4">
@@ -26,8 +30,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ title, products,descri
               image={product.image}
               imageAlt={product.imageAlt}
               badge={product.badge}
-              badgeVariant={product.salePrice ? 'sale' : 'primary'}
-              onAddToCart={() => console.log('Added to cart')}
+              badgeVariant={product.salePrice ? "sale" : "primary"}
+              onAddToCart={() => console.log("Added to cart")}
               className="min-w-[200px]"
             />
           ))}
@@ -36,4 +40,3 @@ export const ProductGrid: React.FC<ProductGridProps> = ({ title, products,descri
     </section>
   );
 };
-

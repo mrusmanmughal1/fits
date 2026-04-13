@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/contexts/CartContext";
+import { ReactQueryProvider } from "@/components/providers/ReactQueryProvider";
+import { SoundProvider } from "@/components/providers/SoundProvider";
+import { Footer, Header } from "@/components";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -19,10 +23,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${poppins.className} bg-accent antialiased`}
-      >
-        {children}
+      <body className={`${poppins.className} bg-accent antialiased`}>
+        <ReactQueryProvider>
+          <CartProvider>
+            <SoundProvider>
+              <Header />
+              {children}
+              <Footer />
+            </SoundProvider>
+          </CartProvider>
+        </ReactQueryProvider>
       </body>
     </html>
   );

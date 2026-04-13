@@ -48,7 +48,7 @@ export interface ResetPasswordResponse {
 }
 
 export async function register(
-  payload: RegisterPayload
+  payload: RegisterPayload,
 ): Promise<AuthResponse> {
   const { data } = await http.post("/auth/register", payload);
 
@@ -60,7 +60,7 @@ export async function register(
 
   return data;
 }
-
+// sas
 export async function login(payload: LoginPayload): Promise<AuthResponse> {
   const { data } = await http.post("/auth/login", payload);
 
@@ -84,14 +84,14 @@ export async function logout(): Promise<LogoutResponse> {
 }
 
 export async function forgotPassword(
-  payload: ForgotPasswordPayload
+  payload: ForgotPasswordPayload,
 ): Promise<ForgotPasswordResponse> {
   const { data } = await http.post("/auth/forgot-password", payload);
   return data;
 }
 
 export async function resetPassword(
-  payload: ResetPasswordPayload
+  payload: ResetPasswordPayload,
 ): Promise<ResetPasswordResponse> {
   const { data } = await http.post("/auth/reset-password", payload);
   return data;

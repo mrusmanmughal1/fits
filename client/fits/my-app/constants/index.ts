@@ -5,11 +5,10 @@ export const BRAND_TAGLINE = 'The best place to buy and sell electronics';
 
 // Navigation links
 export const NAV_LINKS = [
-  { label: 'Shop', href: '/shop' },
+  { label: 'Shop', href: '/products' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Pages', href: '/pages' },
 ] as const;
 
 // Feature list - Left column (3 items)

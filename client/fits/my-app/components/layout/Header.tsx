@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { NAV_LINKS, BRAND_TAGLINE, BRAND_NAME } from "@/constants";
 import Image from "next/image";
 import { useCart } from "@/contexts/CartContext";
@@ -12,6 +12,7 @@ import {
   Bell,
   ChevronDown,
   Heart,
+  LayoutDashboard,
   LogOut,
   Menu,
   Search,
@@ -25,6 +26,7 @@ export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { openCart, getTotalItems } = useCart();
   const router = useRouter();
+  const pathname = usePathname();
 
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const user = useAuthStore((s) => s.user);
@@ -59,6 +61,10 @@ export const Header: React.FC = () => {
     router.push("/login");
   };
 
+  if (pathname?.startsWith("/admin")) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
       {/* Top Banner */}
@@ -67,7 +73,7 @@ export const Header: React.FC = () => {
           <div className="flex items-center justify-center ">
             <p className="text-xs text-gray-600">{BRAND_TAGLINE}</p>
             <Link
-              href="/shop"
+              href="/products"
               className="text-xs font-medium text-primary     px-2  underline        transition-colors"
             >
               Shop Now
@@ -142,6 +148,18 @@ export const Header: React.FC = () => {
             >
               <Heart className="w-5 h-5" />
             </Link>
+
+            {/* Admin Dashboard Icon (Only for Admins) */}
+            {isAuthenticated && user?.role === "admin" && (
+              <Link
+                href="/admin"
+                className="p-2 text-gray-700 hover:text-primary transition-colors"
+                aria-label="Admin Dashboard"
+                title="Admin Dashboard"
+              >
+                <LayoutDashboard className="w-5 h-5" />
+              </Link>
+            )}
 
             {/* User / Auth */}
             {isAuthenticated ? (

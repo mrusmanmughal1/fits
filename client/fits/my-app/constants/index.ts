@@ -2,7 +2,7 @@
 import logo from '@/public/logo.png';
 export const BRAND_NAME = logo;
 export const BRAND_TAGLINE = 'The best place to buy and sell electronics';
-
+ export const CATEGORY_API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:5000/api/v1";
 // Navigation links
 export const NAV_LINKS = [
   { label: 'Shop', href: '/products' },

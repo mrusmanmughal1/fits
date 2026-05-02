@@ -21,9 +21,11 @@ import {
   User,
 } from "lucide-react";
 import { useLogout } from "@/hooks/Auth/useLogout";
+import { CategoryDropdown } from "./CategoryDropdown";
 
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
   const { openCart, getTotalItems } = useCart();
   const router = useRouter();
   const pathname = usePathname();
@@ -34,7 +36,6 @@ export const Header: React.FC = () => {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
       if (!userMenuRef.current) return;
@@ -85,11 +86,11 @@ export const Header: React.FC = () => {
       {/* Main Header */}
       <div className="container mx-auto w-[90%]">
         <div className="grid grid-cols-3 items-center justify-between  ">
-          {/* Logo and Mobile Menu */}
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8 w-full">
-            {NAV_LINKS.map((link) => (
+            <CategoryDropdown />
+            {NAV_LINKS.filter(link => link.label !== "Shop").map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -255,10 +256,53 @@ export const Header: React.FC = () => {
       {isMenuOpen && (
         <div className="lg:hidden border-t border-gray-200 bg-white">
           <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-            {NAV_LINKS.map((link) => (
+            {/* Shop / Categories Section for Mobile */}
+            <div>
+              <button
+                onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
+                className="flex items-center justify-between w-full text-gray-700 hover:text-primary transition-colors font-medium"
+              >
+                Shop
+                <ChevronDown
+                  className={`w-4 h-4 transition-transform ${
+                    isMobileCategoriesOpen ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+              {isMobileCategoriesOpen && (
+                <div className="mt-2 pl-4 flex flex-col gap-2">
+                  <Link
+                    href="/products"
+                    onClick={() => {
+                      setIsMenuOpen(false);
+                      setIsMobileCategoriesOpen(false);
+                    }}
+                    className="text-sm text-gray-600 hover:text-primary transition-colors"
+                  >
+                    All Products
+                  </Link>
+                  {categories.map((category) => (
+                    <Link
+                      key={category}
+                      href={`/products?category=${encodeURIComponent(category)}`}
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        setIsMobileCategoriesOpen(false);
+                      }}
+                      className="text-sm text-gray-600 hover:text-primary transition-colors"
+                    >
+                      {category}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {NAV_LINKS.filter(link => link.label !== "Shop").map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
+                onClick={() => setIsMenuOpen(false)}
                 className="text-gray-700 hover:text-primary transition-colors font-medium"
               >
                 {link.label}

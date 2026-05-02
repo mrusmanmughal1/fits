@@ -335,10 +335,18 @@ export function getRelatedProducts(currentProductId: string, limit: number = 4):
   if (!currentProduct) return [];
 
   return allProducts
-    .filter(product => 
-      product.id !== currentProductId && 
+    .filter(product =>
+      product.id !== currentProductId &&
       product.category === currentProduct.category
     )
     .slice(0, limit);
+}
+
+/**
+ * Get all unique categories
+ */
+export function getAllCategories(): string[] {
+  const categories = Array.from(new Set(allProducts.map(product => product.category)));
+  return categories.sort();
 }
 

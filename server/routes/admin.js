@@ -3,10 +3,12 @@ const router = express.Router();
 
 const productsCtrl = require("../controllers/productsController");
 const brandsCtrl = require("../controllers/brandsController");
+const categoriesCtrl = require("../controllers/categoriesController");
 const validate = require("../middleware/validate");
 
 const { createProduct, updateProduct, idParam: productIdParam } = require("../schemas/product");
 const { createBrand, updateBrand, idParam: brandIdParam } = require("../schemas/brand");
+const { createCategory } = require("../schemas/category");
 
 // =======================
 // ADMIN - PRODUCTS
@@ -114,6 +116,64 @@ const { createBrand, updateBrand, idParam: brandIdParam } = require("../schemas/
 router.post("/products", validate(createProduct), productsCtrl.createProduct);
 router.put("/products/:id", validate(productIdParam, "params"), validate(updateProduct), productsCtrl.updateProduct);
 router.delete("/products/:id", validate(productIdParam, "params"), productsCtrl.deleteProduct);
+
+// =======================
+// ADMIN - CATEGORIES
+// =======================
+
+/**
+ * @swagger
+ * tags:
+ *   name: Admin Categories
+ *   description: Admin endpoints for managing product categories
+ */
+
+/**
+ * @swagger
+ * /api/v1/admin/categories:
+ *   post:
+ *     summary: Create a new category
+ *     description: >-
+ *       Persists a category name so it appears in public GET /api/v1/categories
+ *       even before any product uses it. Requires admin JWT.
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateCategoryRequest"
+ *     responses:
+ *       201:
+ *         description: Category created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Category"
+ *       400:
+ *         description: Validation failed (e.g. missing or empty name)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/ValidationErrorResponse"
+ *       401:
+ *         description: Unauthorized (missing or invalid JWT)
+ *       403:
+ *         description: Forbidden (admin role required)
+ *       409:
+ *         description: Conflict (category name already exists)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Category already exists
+ */
+router.post("/categories", validate(createCategory), categoriesCtrl.createCategory);
 
 // =======================
 // ADMIN - BRANDS

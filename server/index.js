@@ -7,6 +7,7 @@ const productsRoutes = require("./routes/products");
 const cartRoutes = require("./routes/cart");
 const authRoutes = require("./routes/auth");
 const usersRoutes = require("./routes/users");
+const categoriesRoutes = require("./routes/categories");
 const errorHandler = require("./middleware/errorHandler");
 const db = require("./db");
 
@@ -36,6 +37,7 @@ app.use("/api/v1/products", productsRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", usersRoutes);
+app.use("/api/v1/categories", categoriesRoutes);
 const adminRoutes = require("./routes/admin");
 const authenticate = require("./middleware/auth");
 const requireAdmin = require("./middleware/requireAdmin");

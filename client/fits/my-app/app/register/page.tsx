@@ -16,6 +16,7 @@ interface FormValues {
   lastname: string;
   email: string;
   password: string;
+  phone: string;
   confirmPassword: string;
 }
 
@@ -24,6 +25,7 @@ const initialValues: FormValues = {
   firstname: "",
   lastname: "",
   email: "",
+  phone: "",
   password: "",
   confirmPassword: "",
 };
@@ -44,12 +46,13 @@ export default function RegisterPage() {
 
   const handleSubmit = async (
     values: FormValues,
-    { resetForm }: FormikHelpers<FormValues>
+    { resetForm }: FormikHelpers<FormValues>,
   ) => {
     const registerPayload: RegisterPayload = {
       firstname: values.firstname,
       lastname: values.lastname,
       email: values.email,
+      phone: values.phone,
       password: values.password,
     };
 
@@ -219,10 +222,49 @@ export default function RegisterPage() {
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
-                        placeholder="Enter your email"
+                        placeholder="Enter your email Address"
                       />
                       <ErrorMessage
                         name="email"
+                        component="p"
+                        className="mt-1 text-xs text-red-600"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone  add pakistani  flag adn +92 */}
+
+                  <div className="grid grid-cols-3 items-start justify-between gap-4">
+                    <label
+                      htmlFor="phone"
+                      className="text-sm font-medium text-gray-700 w-20 shrink-0 pt-3"
+                    >
+                      Phone
+                    </label>
+                    <div className="col-span-2 flex gap-2 rounded-3xl border focus-within:border-primary  ">
+                      <div className="flex ms-4 items-center gap-2">
+                        <img
+                          src="https://flagcdn.com/w20/pk.png"
+                          alt="Pakistan flag"
+                          className="w-8 h-5"
+                        />
+                        <span>+92</span>
+                      </div>
+                      {/* // on focus on input make this upper div border color */}
+                      <Field
+                        id="phone"
+                        name="phone"
+                        type="text"
+                        maxLength={10}
+                        className={`w-full px-4 py-3 focus:outline-none   focus:border-transparent  ${
+                          errors.phone && touched.phone
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                        placeholder="Enter your phone"
+                      />
+                      <ErrorMessage
+                        name="phone"
                         component="p"
                         className="mt-1 text-xs text-red-600"
                       />

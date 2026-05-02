@@ -9,7 +9,6 @@ export const NAV_LINKS = [
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
   { label: 'Blog', href: '/blog' },
-  { label: 'Pages', href: '/pages' },
 ] as const;
 
 // Feature list - Left column (3 items)

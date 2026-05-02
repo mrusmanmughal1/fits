@@ -7,7 +7,7 @@ import { BRANDS } from '@/constants';
 export const Brands: React.FC = () => {
   return (
     <section className="py-16  ">
-      <div className="container  bg-neutral-200 py-10  mx-auto px-4">
+      <div className="   bg-neutral-200 py-10  mx-auto px-4">
         <Marquee
           speed={50}
           gradient={true}

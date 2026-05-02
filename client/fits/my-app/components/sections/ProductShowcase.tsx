@@ -35,7 +35,8 @@ export const ProductShowcase: React.FC<ProductShowcaseProps> = ({
               <Image
                 src={image}
                 alt={title}
-                fill
+                  fill
+                
                 className="object-cover"
                 sizes="100vw"
               />

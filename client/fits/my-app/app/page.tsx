@@ -90,7 +90,7 @@ export default function Home() {
 
       {/* Product Showcases */}
       <section className="py-1 bg-white overflow-hidden">
-        <div className="container mx-auto   space-y-4">
+        <div className="  mx-auto   space-y-4">
           <ProductShowcase
             title="Longer Battery Life Faster Charging"
             image="/images/feature.webp"

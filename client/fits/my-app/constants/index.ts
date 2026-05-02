@@ -5,7 +5,7 @@ export const BRAND_TAGLINE = 'The best place to buy and sell electronics';
 
 // Navigation links
 export const NAV_LINKS = [
-  { label: 'Shop', href: '/shop' },
+  { label: 'Shop', href: '/products' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/contact' },
   { label: 'Blog', href: '/blog' },
@@ -61,7 +61,7 @@ export const FEATURES = [
 ] as const;
 
 // Brand logos
-export const BRANDS = ['BOSS', 'Canon', 'DELL', 'Nikon', 'Panasonic', 'PENTAX', 'SAMSUNG'] as const;
+export const BRANDS = ['BOSS', 'Canon', 'DELL', 'Nikon', 'Panasonic', 'PENTAX', 'SAMSUNG','DELL', 'Nikon', 'Panasonic', 'PENTAX', 'SAMSUNG'] as const;
 
 // Service guarantees
 export const SERVICE_GUARANTEES = [

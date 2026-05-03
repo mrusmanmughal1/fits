@@ -25,16 +25,7 @@ const ctrl = require("../controllers/productsController");
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   price:
- *                     type: number
- *                   brand:
- *                     type: string
+ *                 $ref: "#/components/schemas/Product"
  */
 
 /**
@@ -53,6 +44,10 @@ const ctrl = require("../controllers/productsController");
  *     responses:
  *       200:
  *         description: Product data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Product"
  *       404:
  *         description: Product not found
  */

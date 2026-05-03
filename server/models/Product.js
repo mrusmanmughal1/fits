@@ -14,20 +14,20 @@ const productSchema = new Schema(
     specifications: [
       {
         key: { type: String, required: true },
-        value: { type: String, required: true }
-      }
+        value: { type: String, required: true },
+      },
     ],
     features: [{ type: String }],
     isFeatured: { type: Boolean, default: false },
-    status: { 
-      type: String, 
-      enum: ['Active', 'Draft', 'Archived'], 
-      default: 'Active' 
+    status: {
+      type: String,
+      enum: ["Active", "Draft", "Archived"],
+      default: "Active",
     },
     averageRating: { type: Number, default: 0, min: 0, max: 5 },
-    reviewCount: { type: Number, default: 0 }
+    reviewCount: { type: Number, default: 0 },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = model("Product", productSchema);

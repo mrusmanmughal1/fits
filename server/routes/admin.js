@@ -8,7 +8,7 @@ const validate = require("../middleware/validate");
 
 const { createProduct, updateProduct, idParam: productIdParam } = require("../schemas/product");
 const { createBrand, updateBrand, idParam: brandIdParam } = require("../schemas/brand");
-const { createCategory } = require("../schemas/category");
+const { createCategory, updateCategory, idParam: categoryIdParam } = require("../schemas/category");
 
 // =======================
 // ADMIN - PRODUCTS
@@ -34,27 +34,7 @@ const { createCategory } = require("../schemas/category");
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - name
- *               - description
- *               - brand
- *               - category
- *               - price
- *             properties:
- *               name:
- *                 type: string
- *               description:
- *                 type: string
- *               brand:
- *                 type: string
- *                 description: ObjectId of the Brand
- *               category:
- *                 type: string
- *               price:
- *                 type: number
- *               stock:
- *                 type: number
+ *             $ref: "#/components/schemas/ProductInput"
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -83,14 +63,7 @@ const { createCategory } = require("../schemas/category");
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               price:
- *                 type: number
- *               stock:
- *                 type: number
+ *             $ref: "#/components/schemas/ProductInput"
  *     responses:
  *       200:
  *         description: Product updated successfully
@@ -131,6 +104,28 @@ router.delete("/products/:id", validate(productIdParam, "params"), productsCtrl.
 /**
  * @swagger
  * /api/v1/admin/categories:
+ *   get:
+ *     summary: Get all categories (Admin)
+ *     description: Returns all category documents including isActive status. Supports pagination. Requires admin JWT.
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
+ *     responses:
+ *       200:
+ *         description: All categories retrieved successfully
  *   post:
  *     summary: Create a new category
  *     description: >-
@@ -173,7 +168,60 @@ router.delete("/products/:id", validate(productIdParam, "params"), productsCtrl.
  *                   type: string
  *                   example: Category already exists
  */
+router.get("/categories", categoriesCtrl.listAllCategories);
 router.post("/categories", validate(createCategory), categoriesCtrl.createCategory);
+
+/**
+ * @swagger
+ * /api/v1/admin/categories/{id}:
+ *   put:
+ *     summary: Update a category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               isActive:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ *       404:
+ *         description: Category not found
+ *   delete:
+ *     summary: Delete a category
+ *     tags: [Admin Categories]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ *       404:
+ *         description: Category not found
+ */
+router.put("/categories/:id", validate(categoryIdParam, "params"), validate(updateCategory), categoriesCtrl.updateCategory);
+router.delete("/categories/:id", validate(categoryIdParam, "params"), categoriesCtrl.deleteCategory);
 
 // =======================
 // ADMIN - BRANDS
@@ -191,9 +239,23 @@ router.post("/categories", validate(createCategory), categoriesCtrl.createCatego
  * /api/v1/admin/brands:
  *   get:
  *     summary: Get a list of all brands
+ *     description: Returns all brand documents. Supports pagination. Requires admin JWT.
  *     tags: [Admin Brands]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *         description: Page number
+ *       - in: query
+ *         name: limit
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *         description: Number of items per page
  *     responses:
  *       200:
  *         description: List of brands retrieved successfully

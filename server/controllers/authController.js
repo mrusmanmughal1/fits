@@ -98,7 +98,7 @@ async function register(req, res, next) {
         email: user.email,
         name: firstname + " " + lastname,
       },
-      mesage: "User registered successfully",
+      message: "User registered successfully",
     });
   } catch (err) {
     next(err);
@@ -204,7 +204,10 @@ async function refresh(req, res, next) {
       secure: process.env.NODE_ENV === "production",
       expires: expiresAt,
     });
-    res.json({ accessToken, expiresIn: ACCESS_EXP });
+    res.json({
+      message: "Token refreshed successfully",
+      data: { accessToken, expiresIn: ACCESS_EXP },
+    });
   } catch (err) {
     next(err);
   }

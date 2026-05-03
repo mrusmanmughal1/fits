@@ -86,11 +86,10 @@ export const Header: React.FC = () => {
       {/* Main Header */}
       <div className="container mx-auto w-[90%]">
         <div className="grid grid-cols-3 items-center justify-between  ">
-
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8 w-full">
             <CategoryDropdown />
-            {NAV_LINKS.filter(link => link.label !== "Shop").map((link) => (
+            {NAV_LINKS.filter((link) => link.label !== "Shop").map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
@@ -259,7 +258,9 @@ export const Header: React.FC = () => {
             {/* Shop / Categories Section for Mobile */}
             <div>
               <button
-                onClick={() => setIsMobileCategoriesOpen(!isMobileCategoriesOpen)}
+                onClick={() =>
+                  setIsMobileCategoriesOpen(!isMobileCategoriesOpen)
+                }
                 className="flex items-center justify-between w-full text-gray-700 hover:text-primary transition-colors font-medium"
               >
                 Shop
@@ -298,7 +299,7 @@ export const Header: React.FC = () => {
               )}
             </div>
 
-            {NAV_LINKS.filter(link => link.label !== "Shop").map((link) => (
+            {NAV_LINKS.filter((link) => link.label !== "Shop").map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

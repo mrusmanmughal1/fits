@@ -1,16 +1,16 @@
 // Shared TypeScript types and interfaces
-import { StaticImageData } from 'next/image';
+import { StaticImageData } from "next/image";
 
 export interface Product {
   id: string;
+  _id: string;
   name: string;
   price: number;
   salePrice?: number;
-  image: string | StaticImageData;
-  images?: (string | StaticImageData)[];
+  images?: string[];
   imageAlt?: string;
   badge?: string;
-  badgeVariant?: 'primary' | 'success' | 'error' | 'sale';
+  badgeVariant?: "primary" | "success" | "error" | "sale";
   description?: string;
   category?: string;
   inStock?: boolean;
@@ -40,6 +40,7 @@ export interface Feature {
 
 export interface Category {
   id: string;
+  _id: string;
   name: string;
   slug: string;
   image?: string;
@@ -57,9 +58,22 @@ export interface User {
 }
 
 // Button variants
-export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger' | 'success' | 'warning' | 'disabled';
-export type ButtonSize = 'sm' | 'md' | 'lg';
+export type ButtonVariant =
+  | "primary"
+  | "secondary"
+  | "outline"
+  | "ghost"
+  | "danger"
+  | "success"
+  | "warning"
+  | "disabled";
+export type ButtonSize = "sm" | "md" | "lg";
 
 // Badge variants
-export type BadgeVariant = 'primary' | 'success' | 'error' | 'sale' | 'warning' | 'info';
-
+export type BadgeVariant =
+  | "primary"
+  | "success"
+  | "error"
+  | "sale"
+  | "warning"
+  | "info";

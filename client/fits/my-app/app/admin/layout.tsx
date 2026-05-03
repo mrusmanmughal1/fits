@@ -13,6 +13,7 @@ import {
   LogOut,
   ShoppingBag,
   Tags,
+  LayoutGrid,
 } from "lucide-react";
 import { useLogout } from "@/hooks/Auth/useLogout";
 
@@ -53,6 +54,7 @@ export default function AdminLayout({
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
     { name: "Products", href: "/admin/products", icon: ShoppingBag },
     { name: "Categories", href: "/admin/categories", icon: Tags },
+    { name: "Brands", href: "/admin/brands", icon: LayoutGrid },
     { name: "Users", href: "/admin/users", icon: Users },
     { name: "Settings", href: "/admin/settings", icon: Settings },
   ];
@@ -141,7 +143,7 @@ export default function AdminLayout({
             </span>
           </div>
         </header>
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50  p-3 px-6">
           {children}
         </main>
       </div>

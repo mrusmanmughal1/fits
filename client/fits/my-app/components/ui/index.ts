@@ -17,3 +17,14 @@ export type { BreadcrumbItem } from "./Breadcrumb";
 
 export { Pagination } from "./Pagination";
 export type { PaginationProps } from "./Pagination";
+
+export { Textarea } from "./Textarea";
+export type { TextareaProps } from "./Textarea";
+
+export { Select } from "./Select";
+export type { SelectProps } from "./Select";
+
+export { Modal } from "./Modal";
+export { DeleteConfirmModal } from "./DeleteConfirmModal";
+
+export { Loader, MiniLoader, PageLoader } from "./Loader";

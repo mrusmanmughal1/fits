@@ -6,10 +6,10 @@ import * as Yup from "yup";
 import { LayoutGrid, List as ListIcon } from "lucide-react";
 
 import type { Product } from "@/types";
-import { Breadcrumb, Pagination } from "@/components/ui";
+import { Breadcrumb, Loader, PageLoader, Pagination } from "@/components/ui";
 import { ProductCard } from "@/components/features/ProductCard";
 import { ProductListItem } from "@/components/features/ProductListItem";
-import { getAllProducts } from "@/lib/products";
+import { useProducts } from "@/hooks/Products/useProducts";
 import { useCart } from "@/contexts/CartContext";
 
 type ViewMode = "grid" | "list";
@@ -63,12 +63,13 @@ function applyFilters(products: Product[], values: FilterValues) {
 function applySort(
   products: Product[],
   sort: SortOption,
-  originalOrder: Map<string, number>
+  originalOrder: Map<string, number>,
 ) {
   const list = [...products];
   if (sort === "relevance") {
     return list.sort(
-      (a, b) => (originalOrder.get(a.id) ?? 0) - (originalOrder.get(b.id) ?? 0)
+      (a, b) =>
+        (originalOrder.get(a._id) ?? 0) - (originalOrder.get(b._id) ?? 0),
     );
   }
   if (sort === "price-asc")
@@ -138,14 +139,14 @@ function ProductsBody({
     formik.values.sizes.join(","),
     formik.values.colors.join(","),
   ]);
-
+  console.log(products);
   const filtered = useMemo(
     () => applyFilters(products, formik.values),
-    [products, formik.values]
+    [products, formik.values],
   );
   const sorted = useMemo(
     () => applySort(filtered, formik.values.sort, originalOrder),
-    [filtered, formik.values.sort, originalOrder]
+    [filtered, formik.values.sort, originalOrder],
   );
 
   const totalItems = sorted.length;
@@ -158,7 +159,7 @@ function ProductsBody({
 
   const start = (currentPage - 1) * PAGE_SIZE;
   const pageItems = sorted.slice(start, start + PAGE_SIZE);
-
+  console.log(pageItems);
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
       {/* Filters */}
@@ -336,12 +337,12 @@ function ProductsBody({
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {pageItems.map((p) => (
               <ProductCard
-                key={p.id}
-                id={p.id}
+                key={p._id}
+                id={p._id}
                 name={p.name}
                 price={p.price}
                 salePrice={p.salePrice}
-                image={p.image}
+                images={p.images}
                 imageAlt={p.imageAlt}
                 badge={p.badge}
                 badgeVariant={p.salePrice ? "sale" : "primary"}
@@ -356,7 +357,7 @@ function ProductsBody({
           <div className="space-y-5">
             {pageItems.map((p) => (
               <ProductListItem
-                key={p.id}
+                key={p._id}
                 product={p}
                 onAddToCart={() => {
                   addItem(p, 1);
@@ -385,16 +386,18 @@ function ProductsBody({
 }
 
 export default function ProductsPage() {
-  const products = useMemo(() => getAllProducts(), []);
+  const { data, isLoading } = useProducts({ limit: 100 });
+  const products = data?.data || [];
   const originalOrder = useMemo(
-    () => new Map(products.map((p, idx) => [p.id, idx])),
-    [products]
+    () => new Map(products.map((p, idx) => [p._id, idx])),
+    [products],
   );
   const { addItem, openCart } = useCart();
 
   const [view, setView] = useState<ViewMode>("grid");
 
   const priceBounds = useMemo(() => {
+    if (products.length === 0) return { min: 0, max: 1000 };
     const prices = products.map(effectivePrice);
     const min = Math.floor(Math.min(...prices));
     const max = Math.ceil(Math.max(...prices));
@@ -406,7 +409,7 @@ export default function ProductsPage() {
       SIZE_OPTIONS.map((s) => [
         s,
         products.filter((p) => p.sizes?.includes(s)).length,
-      ])
+      ]),
     ) as Record<(typeof SIZE_OPTIONS)[number], number>;
   }, [products]);
 
@@ -416,7 +419,7 @@ export default function ProductsPage() {
         c.name,
         products.filter((p) => (p.colors ?? []).some((x) => x.name === c.name))
           .length,
-      ])
+      ]),
     ) as Record<(typeof COLOR_OPTIONS)[number]["name"], number>;
   }, [products]);
 
@@ -455,8 +458,16 @@ export default function ProductsPage() {
           ])
           .required(),
       }),
-    [priceBounds.max, priceBounds.min]
+    [priceBounds.max, priceBounds.min],
   );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader size="lg" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-accent">

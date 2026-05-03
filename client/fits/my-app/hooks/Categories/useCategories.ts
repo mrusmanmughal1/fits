@@ -3,10 +3,6 @@ import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { CategoryQuery, CategoryService } from "@/services/categories";
 
-
-
-
-
 export function useCategories(params?: CategoryQuery) {
   return useQuery<{ message: string; data: string[] }, AxiosError>({
     queryKey: ["categories"],

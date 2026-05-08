@@ -11,8 +11,6 @@ import {
   Loader,
 } from "@/components/ui";
 import { useBrands, useDeleteBrand } from "@/hooks/Brands/useBrands";
-import { cn } from "@/lib/utils";
-import { toast } from "react-hot-toast";
 
 export default function AdminBrandsPage() {
   const [page, setPage] = useState(1);
@@ -95,7 +93,7 @@ export default function AdminBrandsPage() {
                     <Loader size="md" />
                   </td>
                 </tr>
-              ) : brands.length === 0 ? (
+              ) : filteredBrands?.length === 0 ? (
                 <tr>
                   <td
                     colSpan={4}
@@ -105,7 +103,7 @@ export default function AdminBrandsPage() {
                   </td>
                 </tr>
               ) : (
-                brands.map((brand) => (
+                filteredBrands?.map((brand) => (
                   <tr
                     key={brand._id}
                     className="hover:bg-gray-50 transition-colors group"
@@ -161,7 +159,7 @@ export default function AdminBrandsPage() {
         </div>
 
         {/* Pagination */}
-        {total > 10 && (
+        {/* {total > 10 && (
           <div className="p-6 border-t border-gray-100 bg-gray-50/30">
             <Pagination
               currentPage={page}
@@ -170,7 +168,7 @@ export default function AdminBrandsPage() {
               onPageChange={setPage}
             />
           </div>
-        )}
+        )} */}
       </div>
 
       <DeleteConfirmModal

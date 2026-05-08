@@ -3,7 +3,13 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Plus, Search, Filter, Edit2, Trash2 } from "lucide-react";
-import { Button, Badge, Pagination, DeleteConfirmModal, Loader } from "@/components/ui";
+import {
+  Button,
+  Badge,
+  Pagination,
+  DeleteConfirmModal,
+  Loader,
+} from "@/components/ui";
 import { useBrands, useDeleteBrand } from "@/hooks/Brands/useBrands";
 import { cn } from "@/lib/utils";
 import { toast } from "react-hot-toast";
@@ -15,7 +21,6 @@ export default function AdminBrandsPage() {
 
   const { data: allBrands = [], isLoading } = useBrands();
   const { mutate: deleteBrand, isPending: isDeleting } = useDeleteBrand();
-  console.log(allBrands.data);
   const handleDelete = (id: string) => {
     setDeleteId(id);
   };

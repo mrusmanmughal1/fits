@@ -10,7 +10,7 @@ export interface Brand {
 }
 
 export const BrandService = {
-  getBrands: () => http.get<ApiResponse<Brand[]>>("/admin/brands"),
+  getBrands: () => http.get<ApiResponse<ApiResponse<Brand[]>>>("/admin/brands"),
   createBrand: (payload: Partial<Brand>) =>
     http.post<ApiResponse<Brand>>("/admin/brands", payload),
   updateBrand: (id: string, payload: Partial<Brand>) =>

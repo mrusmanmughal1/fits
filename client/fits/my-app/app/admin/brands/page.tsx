@@ -19,7 +19,7 @@ export default function AdminBrandsPage() {
   const [search, setSearch] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
-  const { data: allBrands = [], isLoading } = useBrands();
+  const { data: allBrands, isLoading } = useBrands();
   const { mutate: deleteBrand, isPending: isDeleting } = useDeleteBrand();
   const handleDelete = (id: string) => {
     setDeleteId(id);
@@ -33,7 +33,7 @@ export default function AdminBrandsPage() {
     }
   };
 
-  const filteredBrands = allBrands.data?.filter((b) =>
+  const filteredBrands = allBrands?.data?.filter((b) =>
     b.name.toLowerCase().includes(search.toLowerCase()),
   );
 

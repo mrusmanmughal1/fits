@@ -4,15 +4,15 @@ import { useMemo, useState } from "react";
 import { BarChart3, Heart } from "lucide-react";
 import { QuantitySelector } from "./QuantitySelector";
 import { useCart } from "@/contexts/CartContext";
-import { getProductById } from "@/lib/products";
+import { Product } from "@/types";
 
 interface AddToCartPanelProps {
-  productId: string;
+  product: Product;
   inStock?: boolean;
 }
 
 export function AddToCartPanel({
-  productId,
+  product,
   inStock = true,
 }: AddToCartPanelProps) {
   const [quantity, setQuantity] = useState(1);
@@ -21,7 +21,6 @@ export function AddToCartPanel({
   const disabled = useMemo(() => !inStock, [inStock]);
 
   const handleAddToCart = () => {
-    const product = getProductById(productId);
     if (product) {
       addItem(product, quantity);
       openCart(true);

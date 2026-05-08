@@ -10,3 +10,4 @@ export { QuantitySelector } from "./QuantitySelector";
 export { AddToCartPanel } from "./AddToCartPanel";
 export { ProductInfoTabs } from "./ProductInfoTabs";
 export type { ProductTab } from "./ProductInfoTabs";
+export { ReviewsSection } from "./reviews/ReviewsSection";

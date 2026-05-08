@@ -97,3 +97,8 @@ export async function resetPassword(
   const { data } = await http.post("/auth/reset-password", payload);
   return data;
 }
+
+export async function verifyEmail(token: string): Promise<{ message: string }> {
+  const { data } = await http.get(`/auth/verify-email/${token}`);
+  return data;
+}

@@ -166,7 +166,7 @@ div[role="button"],
 
   /* Product card system (used by `components/features/ProductCard.tsx`) */
   .product-card {
-    @apply bg-white border border-gray-200 rounded-3xl shadow-sm overflow-hidden transition;
+    @apply bg-white border border-gray-200 rounded-3xl shadow-xs overflow-hidden transition;
     @apply hover:shadow-md hover:border-primary/30;
   }
   .product-image {
@@ -176,7 +176,7 @@ div[role="button"],
     padding: 2.25rem;
   }
   .product-info {
-    @apply px-6 pb-6 flex flex-col items-center gap-3 text-center;
+    @apply px-6 pb-2 flex flex-col items-center gap-1 text-center;
   }
   .product-title {
     @apply text-sm font-medium text-gray-900;
@@ -184,7 +184,6 @@ div[role="button"],
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    min-height: 2.5rem;
   }
   .product-price {
     @apply text-base font-semibold text-price;

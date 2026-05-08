@@ -18,7 +18,7 @@ export function useBrands() {
 
 export function useCreateBrand() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (payload: Partial<Brand>) => BrandService.createBrand(payload),
     onSuccess: () => {
@@ -33,9 +33,9 @@ export function useCreateBrand() {
 
 export function useUpdateBrand() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
-    mutationFn: ({ id, payload }: { id: string; payload: Partial<Brand> }) => 
+    mutationFn: ({ id, payload }: { id: string; payload: Partial<Brand> }) =>
       BrandService.updateBrand(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["brands"] });
@@ -49,7 +49,7 @@ export function useUpdateBrand() {
 
 export function useDeleteBrand() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string) => BrandService.deleteBrand(id),
     onSuccess: () => {

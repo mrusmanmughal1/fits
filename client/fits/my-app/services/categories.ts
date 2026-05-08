@@ -28,6 +28,7 @@ export interface Category {
   id: string;
   name: string;
   description?: string;
+  image: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -48,9 +49,12 @@ export const CategoryService = {
 
   // Get admin categories with full objects
   getAdminCategories: (params?: CategoryQuery) =>
-    http.get<ApiResponse<{ categories: Category[]; total: number }>>("/admin/categories", {
-      params,
-    }),
+    http.get<ApiResponse<{ categories: Category[]; total: number }>>(
+      "/admin/categories",
+      {
+        params,
+      },
+    ),
 
   // Create a new category
   createCategory: (payload: CreateCategoryPayload) =>

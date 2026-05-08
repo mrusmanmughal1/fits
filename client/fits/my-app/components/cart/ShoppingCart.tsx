@@ -3,39 +3,28 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useCart } from "@/contexts/CartContext";
+import { useCartApi } from "@/hooks";
 import { formatPrice } from "@/lib/utils";
+import { useCart } from "@/contexts/CartContext";
 
 export function ShoppingCart() {
-  const {
-    items,
-    isOpen,
-    closeCart,
-    removeItem,
-    updateQuantity,
-    getTotalItems,
-    getSubtotal,
-    getShipping,
-    getTax,
-    getTotal,
-  } = useCart();
+  const { cart, isLoading, removeItem, updateQuantity } = useCartApi();
+  const { isOpen, closeCart } = useCart();
+  const items = cart?.items || [];
+  const subtotal = cart?.totalAmount || 0;
+  const totalQuantity = cart?.totalQuantity || 0;
 
+  // Static for now, matching the page logic
+  const shipping = subtotal > 0 ? 7 : 0;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
   if (!isOpen) return null;
 
-  const isEmoji = (img: string | any): boolean => {
-    return (
-      typeof img === "string" &&
-      img.length <= 2 &&
-      !img.startsWith("/") &&
-      !img.startsWith("http")
-    );
-  };
-
-  const handleQuantityChange = (productId: string, newQuantity: number) => {
+  const handleQuantityChange = (itemId: string, newQuantity: number) => {
     if (newQuantity < 1) {
-      removeItem(productId);
+      removeItem(itemId);
     } else {
-      updateQuantity(productId, newQuantity);
+      updateQuantity({ itemId, quantity: newQuantity });
     }
   };
 
@@ -52,7 +41,7 @@ export function ShoppingCart() {
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-1 bg-price/10 border-b border-gray-200">
           <h2 className="text-sm font-semibold text-gray-900">
-            Shopping Cart ({getTotalItems()})
+            Shopping Cart ({totalQuantity})
           </h2>
           <button
             onClick={closeCart}
@@ -97,43 +86,53 @@ export function ShoppingCart() {
           ) : (
             <div className="p-6 space-y-4">
               {items.map((item) => {
-                const price = item.salePrice || item.price;
+                const product = item.product;
+                const price = product?.salePrice || product?.price || 0;
                 const itemTotal = price * item.quantity;
-                const itemImage =
-                  item.images && item.images.length > 0
-                    ? item.images[0]
-                    : item.image;
+                const itemImage = product?.images?.[0] ?? product?.image;
 
                 return (
                   <div
-                    key={item.id}
+                    key={item._id}
                     className="flex items-start gap-4 pb-4 border-b border-gray-200 last:border-0"
                   >
                     {/* Product Image */}
-                    <div className="relative w-20 h-20 shrink-0 bg-gray-100 rounded-lg overflow-hidden">
-                      {isEmoji(itemImage) ? (
-                        <div className="w-full h-full flex items-center justify-center text-3xl">
-                          {itemImage as string}
-                        </div>
-                      ) : (
-                        <Image
-                          src={itemImage}
-                          alt={item.imageAlt || item.name}
-                          width={80}
-                          height={80}
-                          className="w-full h-full object-cover"
-                        />
-                      )}
+                    <div className="relative w-20 h-20 shrink-0 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center">
+                      <Image
+                        src={itemImage as string}
+                        alt={product?.imageAlt || product?.name || ""}
+                        width={80}
+                        height={80}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
 
                     {/* Product Info */}
                     <div className="flex-1 min-w-0">
                       <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
-                        {item.name}
+                        {product?.name}
                       </h3>
-                      <p className="text-xs text-gray-500 mb-2">
-                        {item.quantity} X
-                      </p>
+                      <div className="flex items-center gap-2 mb-2">
+                        <button
+                          onClick={() =>
+                            handleQuantityChange(item._id, item.quantity - 1)
+                          }
+                          className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-xs hover:bg-gray-50"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-semibold">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() =>
+                            handleQuantityChange(item._id, item.quantity + 1)
+                          }
+                          className="w-6 h-6 rounded border border-gray-200 flex items-center justify-center text-xs hover:bg-gray-50"
+                        >
+                          +
+                        </button>
+                      </div>
                       <p className="text-sm font-semibold text-gray-900">
                         {formatPrice(itemTotal)}
                       </p>
@@ -141,7 +140,7 @@ export function ShoppingCart() {
 
                     {/* Delete Button */}
                     <button
-                      onClick={() => removeItem(item.id)}
+                      onClick={() => removeItem(item._id)}
                       className="p-2 text-gray-400 hover:text-red-600 transition-colors shrink-0"
                       aria-label="Remove item"
                     >
@@ -171,34 +170,22 @@ export function ShoppingCart() {
           <div className="border-t border-gray-200 p-6 space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">
-                {getTotalItems()} {getTotalItems() === 1 ? "item" : "items"}
+                {totalQuantity} {totalQuantity === 1 ? "item" : "items"}
               </span>
               <span className="font-semibold text-gray-900">
-                {formatPrice(getSubtotal())}
+                {formatPrice(subtotal)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Shipping</span>
               <span className="font-semibold text-gray-900">
-                {formatPrice(getShipping())}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Total (tax excl.)</span>
-              <span className="font-semibold text-gray-900">
-                {formatPrice(getSubtotal() + getShipping())}
+                {formatPrice(shipping)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">Total (tax incl.)</span>
-              <span className="font-semibold text-gray-900">
-                {formatPrice(getTotal())}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Taxes:</span>
-              <span className="font-semibold text-gray-900">
-                {formatPrice(getTax())}
+              <span className="font-semibold text-gray-900 text-lg">
+                {formatPrice(total)}
               </span>
             </div>
           </div>
@@ -210,14 +197,14 @@ export function ShoppingCart() {
             <Link
               href="/cart"
               onClick={closeCart}
-              className="flex-1 px-6 py-3 rounded-lg border-2 border-primary text-primary font-medium hover:bg-primary hover:text-white transition-colors text-center"
+              className="flex-1 px-6 py-2 rounded-3xl border-2 border-primary text-primary font-medium hover:bg-primary hover:text-white transition-colors text-center"
             >
               View Cart
             </Link>
             <Link
               href="/checkout"
               onClick={closeCart}
-              className="flex-1 px-6 py-3 rounded-lg bg-primary text-white font-medium hover:bg-blue-700 transition-colors text-center"
+              className="flex-1 px-6 py-2 rounded-3xl bg-primary text-white font-medium hover:bg-blue-700 transition-colors text-center"
             >
               Check Out
             </Link>

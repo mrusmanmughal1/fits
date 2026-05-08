@@ -6,12 +6,12 @@ import Link from "next/link";
 import { Trash2, Minus, Plus, Lock } from "lucide-react";
 
 import { Breadcrumb, Button } from "@/components/ui";
-import { useCart } from "@/contexts/CartContext";
+import { useCartApi } from "@/hooks";
 import { formatPrice } from "@/lib/utils";
-import type { CartItem, Product } from "@/types";
+import type { Product } from "@/types";
 
-function getItemImage(item: Product) {
-  const img = item.images?.[0] ?? item.image;
+function getItemImage(product: Product) {
+  const img = product.images?.[0] ?? product.image;
   const isEmoji =
     typeof img === "string" &&
     img.length <= 2 &&
@@ -20,89 +20,30 @@ function getItemImage(item: Product) {
   return { img, isEmoji };
 }
 
-const DUMMY_CART_ITEMS: CartItem[] = [
-  {
-    id: "demo-keyboard",
-    name: "Mechanical Keyboard",
-    price: 129,
-    salePrice: 99,
-    image: "⌨️",
-    imageAlt: "Mechanical Keyboard",
-    quantity: 1,
-  },
-  {
-    id: "demo-mouse",
-    name: "Wireless Mouse",
-    price: 49,
-    image: "🖱️",
-    imageAlt: "Wireless Mouse",
-    quantity: 2,
-  },
-  {
-    id: "demo-headphones",
-    name: "Noise Cancelling Headphones",
-    price: 199,
-    salePrice: 159,
-    image: "🎧",
-    imageAlt: "Headphones",
-    quantity: 1,
-  },
-  {
-    id: "demo-keyboard",
-    name: "Mechanical Keyboard",
-    price: 129,
-    salePrice: 99,
-    image: "⌨️",
-    imageAlt: "Mechanical Keyboard",
-    quantity: 1,
-  },
-  {
-    id: "demo-mouse",
-    name: "Wireless Mouse",
-    price: 49,
-    image: "🖱️",
-    imageAlt: "Wireless Mouse",
-    quantity: 2,
-  },
-  {
-    id: "demo-headphones",
-    name: "Noise Cancelling Headphones",
-    price: 199,
-    salePrice: 159,
-    image: "🎧",
-    imageAlt: "Headphones",
-    quantity: 1,
-  },
-];
-
 export default function CartPage() {
-  const {
-    items,
-    updateQuantity,
-    removeItem,
-    clearCart,
-    getTotalItems,
-    getSubtotal,
-    getShipping,
-    getTax,
-    getTotal,
-  } = useCart();
+  const { cart, isLoading, updateQuantity, removeItem, clearCart } =
+    useCartApi();
 
-  const isUsingDummyCart = items.length === 0;
-  const effectiveItems = isUsingDummyCart ? DUMMY_CART_ITEMS : items;
+  const items = cart?.items || [];
+  const subtotal = cart?.totalAmount || 0;
+  const totalItems = cart?.totalQuantity || 0;
 
-  const subtotal = isUsingDummyCart
-    ? effectiveItems.reduce((sum, item) => {
-        const price = item.salePrice || item.price;
-        return sum + price * item.quantity;
-      }, 0)
-    : getSubtotal();
-  const shipping = isUsingDummyCart ? (subtotal > 0 ? 7 : 0) : getShipping();
-  const tax = isUsingDummyCart ? 0 : getTax();
-  const total = isUsingDummyCart ? subtotal + shipping + tax : getTotal();
-  const totalItems = isUsingDummyCart
-    ? effectiveItems.reduce((sum, item) => sum + item.quantity, 0)
-    : getTotalItems();
+  const shipping = subtotal > 0 ? 7 : 0;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-accent">
+        <div className="text-center">
+          <p className="text-gray-900 font-bold text-xl">Loading your cart</p>
+          <p className="text-gray-500 text-sm mt-1">
+            Getting your items ready...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-accent">
@@ -116,20 +57,17 @@ export default function CartPage() {
           </p>
         </div>
 
-        {isUsingDummyCart ? (
-          <div className="mb-6 bg-white rounded-3xl border border-amber-200 p-5">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="text-sm text-gray-800">
-                Your cart is empty — showing{" "}
-                <span className="font-semibold">demo items</span> for preview.
-              </p>
-              <Link
-                href="/products"
-                className="text-sm font-medium text-primary hover:underline"
-              >
-                Add real items
-              </Link>
-            </div>
+        {items.length === 0 ? (
+          <div className="mb-6 bg-white rounded-3xl border border-amber-200 p-8 text-center">
+            <p className="text-gray-800 font-medium">
+              Your cart is currently empty.
+            </p>
+            <Link
+              href="/products"
+              className="mt-4 inline-block text-sm font-bold text-primary hover:underline"
+            >
+              Start shopping
+            </Link>
           </div>
         ) : null}
 
@@ -141,10 +79,10 @@ export default function CartPage() {
                 <h2 className="text-lg font-semibold text-gray-900">
                   Items ({totalItems})
                 </h2>
-                {!isUsingDummyCart ? (
+                {items.length > 0 ? (
                   <button
                     type="button"
-                    onClick={clearCart}
+                    onClick={() => clearCart()}
                     className="text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
                   >
                     Clear cart
@@ -153,52 +91,50 @@ export default function CartPage() {
               </div>
 
               <div className="space-y-4 h-[600px] overflow-auto p-2 scrollbar-thin">
-                {effectiveItems.map((item) => {
-                  const price = item.salePrice || item.price;
+                {items.map((item) => {
+                  const product = item.product;
+                  const price = product?.salePrice || product?.price || 0;
                   const lineTotal = price * item.quantity;
-                  const { img, isEmoji } = getItemImage(item);
+                  const { img, isEmoji } = getItemImage(product);
 
                   return (
                     <div
-                      key={item.id}
+                      key={item._id}
                       className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-2xl border border-gray-200"
                     >
-                      <div className="relative w-20 h-20 shrink-0 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
-                        {/* {isEmoji ? (
-                          <div className="w-full h-full flex items-center justify-center text-3xl">
-                            {img as string}
-                          </div>
+                      <div className="relative w-20 h-20 shrink-0 bg-gray-50 rounded-2xl overflow-hidden border border-gray-100 flex items-center justify-center">
+                        {isEmoji ? (
+                          <div className="text-3xl">{img}</div>
                         ) : (
                           <Image
-                            src={img}
-                            alt={item.imageAlt || item.name}
+                            src={img as string}
+                            alt={product.imageAlt || product.name}
                             width={80}
                             height={80}
                             className="w-full h-full object-cover"
                           />
-                        )} */}
+                        )}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900 truncate">
-                          {item.name}
+                          {product.name}
                         </p>
                         <div className="mt-1 flex items-center gap-2 text-sm">
                           <span className="font-semibold text-gray-900">
                             {formatPrice(price)}
                           </span>
-                          {item.salePrice ? (
+                          {product.salePrice ? (
                             <span className="text-xs text-gray-500 line-through">
-                              {formatPrice(item.price)}
+                              {formatPrice(product.price)}
                             </span>
                           ) : null}
                         </div>
-
-                        {isUsingDummyCart ? (
-                          <p className="mt-2 text-xs text-gray-500">
-                            Demo item (quantity controls disabled)
+                        {item.size && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            Size: {item.size}
                           </p>
-                        ) : null}
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
@@ -206,9 +142,11 @@ export default function CartPage() {
                         <div className="flex items-center gap-2">
                           <button
                             type="button"
-                            disabled={isUsingDummyCart}
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
+                              updateQuantity({
+                                itemId: item._id,
+                                quantity: item.quantity - 1,
+                              })
                             }
                             className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-700 hover:border-primary/40 hover:text-primary transition disabled:opacity-50 disabled:cursor-not-allowed"
                             aria-label="Decrease quantity"
@@ -220,9 +158,11 @@ export default function CartPage() {
                           </span>
                           <button
                             type="button"
-                            disabled={isUsingDummyCart}
                             onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
+                              updateQuantity({
+                                itemId: item._id,
+                                quantity: item.quantity + 1,
+                              })
                             }
                             className="w-9 h-9 rounded-xl border border-gray-200 flex items-center justify-center text-gray-700 hover:border-primary/40 hover:text-primary transition disabled:opacity-50 disabled:cursor-not-allowed"
                             aria-label="Increase quantity"
@@ -236,16 +176,14 @@ export default function CartPage() {
                           <span className="text-sm font-semibold text-gray-900">
                             {formatPrice(lineTotal)}
                           </span>
-                          {!isUsingDummyCart ? (
-                            <button
-                              type="button"
-                              onClick={() => removeItem(item.id)}
-                              className="p-2 rounded-xl text-gray-400 hover:text-red-600 transition-colors"
-                              aria-label="Remove item"
-                            >
-                              <Trash2 className="w-5 h-5" />
-                            </button>
-                          ) : null}
+                          <button
+                            type="button"
+                            onClick={() => removeItem(item._id)}
+                            className="p-2 rounded-xl text-gray-400 hover:text-red-600 transition-colors"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
                         </div>
                       </div>
                     </div>

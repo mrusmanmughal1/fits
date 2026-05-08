@@ -8,6 +8,9 @@ export interface ProductQuery {
   maxPrice?: number;
   rating?: number;
   search?: string;
+  limit?: number;
+  page?: number;
+  isFeatured?: boolean;
 }
 
 export interface ApiResponse<T> {
@@ -29,6 +32,9 @@ export interface CreateProductPayload {
     [key: string]: string;
   }[];
   features: string[];
+  colors?: { name: string; value: string }[];
+  sizes?: string[];
+  dimensions?: string[];
   isFeatured: boolean;
   status: "Active" | "Inactive";
 }

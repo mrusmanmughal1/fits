@@ -1,3 +1,4 @@
+import { productsService } from "@/services/products";
 import { ProductGrid } from "@/components";
 import { Breadcrumb } from "@/components/ui";
 import {
@@ -5,120 +6,91 @@ import {
   ProductImageGallery,
   ProductInfoTabs,
   ProductOptions,
+  ReviewsSection,
   StarRating,
 } from "@/components/features";
 import type { Product } from "@/types";
 import { SocialShare } from "./SocialShare";
 import { PolicySection } from "./PolicySection";
-import buds from "@/public/images/buds.jpg";
-import mouse from "@/public/images/mouse.webp";
-import mouse2 from "@/public/images/mouse2.jpg";
-import watch from "@/public/images/watch.webp";
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: ProductPageProps) {
-  return {
-    title: `Product Details | Fits`,
-    description: `Product details page`,
-  };
+  const { id } = await params;
+  try {
+    const { data: product } = await productsService.getProduct(id);
+    return {
+      title: `${product.name} | Fits`,
+      description: product.description || `Details for ${product.name}`,
+    };
+  } catch (error) {
+    return {
+      title: `Product Not Found | Fits`,
+    };
+  }
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  // Dummy product + related products (ensures ALL UI elements always render)
-  const dummyProduct: Product = {
-    id: "demo-1",
-    name: "Apple Airpods With Charging Case Bluetooth",
-    price: 100,
-    image: buds,
-    images: [buds, mouse, watch, mouse2],
-    imageAlt: "Apple Airpods With Charging Case Bluetooth",
-    inStock: true,
-    brand: "Asus",
-    reference: "ATRL_1056",
-    condition: "New",
-    rating: 4,
-    colors: [
-      { name: "Black", value: "#374151" },
-      { name: "Yellow", value: "#FBBF24" },
-      { name: "Brown", value: "#92400E" },
-    ],
-    sizes: ["Small", "Medium", "Large", "Extra Large"],
-    dimensions: ["40x60cm", "60x90cm"],
-    category: "Audio",
-  };
+  const { id } = await params;
 
-  const relatedProducts: Product[] = [
-    {
-      id: "demo-2",
-      name: "Gaming Mouse",
-      price: 79.99,
-      image: mouse,
-      imageAlt: "Gaming Mouse",
-      inStock: true,
-    },
-    {
-      id: "demo-3",
-      name: "Apple Watch",
-      price: 399.99,
-      image: watch,
-      imageAlt: "Apple Watch",
-      inStock: true,
-    },
-    {
-      id: "demo-4",
-      name: "Wireless Earbuds",
-      price: 129.99,
-      image: buds,
-      imageAlt: "Wireless Earbuds",
-      inStock: true,
-    },
-    {
-      id: "demo-5",
-      name: "Mouse Pro",
-      price: 49.99,
-      image: mouse2,
-      imageAlt: "Mouse Pro",
-      inStock: true,
-    },
-  ];
+  const response = await productsService.getProduct(id);
+  const product = response.data;
+
+  // Fetch related products
+  const relatedResponse = await productsService.getProducts({
+    category: product.category,
+    limit: 5,
+  });
+  const relatedProducts = (relatedResponse?.data?.data || []).filter(
+    (p: Product) => p._id !== id,
+  );
+
+  // The backend populates `brand` as an object { _id, name, ... }
+  // We extract the name string to avoid passing an object to React children
+  const brandName: string =
+    product.brand && typeof product.brand === "object"
+      ? (product.brand as any).name ?? ""
+      : (product.brand as string) ?? "";
 
   const productView = {
-    breadcrumb: [{ label: "Home", href: "/" }, { label: dummyProduct.name }],
-    title: dummyProduct.name,
-    rating: dummyProduct.rating,
+    breadcrumb: [{ label: "Home", href: "/" }, { label: product.name }],
+    title: product.name,
+    rating: product.rating || 0,
     meta: [
-      { label: "Brand", value: dummyProduct.brand },
-      { label: "Reference", value: dummyProduct.reference },
-      { label: "Condition", value: dummyProduct.condition },
+      { label: "Brand", value: brandName },
+      { label: "Reference", value: product.reference },
+      { label: "Condition", value: product.condition },
     ].filter((x) => Boolean(x.value)) as Array<{
       label: string;
       value: string;
     }>,
     price: {
-      current: "$100.00",
-      original: null as string | null,
+      current: `$${product.price.toFixed(2)}`,
+      original: product.salePrice ? `$${product.salePrice.toFixed(2)}` : null,
     },
     options: {
-      colors: dummyProduct.colors,
-      sizes: dummyProduct.sizes,
-      dimensions: dummyProduct.dimensions,
+      colors: product.colors || [],
+      sizes: product.sizes || [],
+      dimensions: product.dimensions || [],
     },
     cart: {
-      productId: dummyProduct.id,
-      inStock: dummyProduct.inStock,
+      productId: product._id || product.id,
+      inStock: product.inStock ?? true,
     },
     gallery: {
-      images: dummyProduct.images ?? [dummyProduct.image],
-      alt: dummyProduct.imageAlt || dummyProduct.name,
+      images:
+        product.images && product.images.length > 0
+          ? product.images
+          : ["/images/placeholder.jpg"],
+      alt: product.imageAlt || product.name,
     },
     share: {
-      productName: dummyProduct.name,
-      productUrl: `/products/${dummyProduct.id}`,
+      productName: product.name,
+      productUrl: `/products/${product._id || product.id}`,
     },
   };
 
@@ -128,44 +100,60 @@ export default async function ProductPage({ params }: ProductPageProps) {
       label: "Description",
       content: (
         <div className="space-y-4">
-          <p>
-            The passage experienced a surge in popularity during the 1960s when
-            Letraset used it on their dry-transfer sheets, and again during the
-            90s as desktop publishers bundled the text with their software.
-            Today it&apos;s seen all around the web; on templates, websites, and
-            stock designs.
-          </p>
-          <ul className="list-disc ps-6 space-y-2">
-            <li>Offer personalized virtual styling appointments</li>
-            <li>
-              Outfit recommendations based on their preferences and body type.
-            </li>
-            <li>Provide a unique service allowing customers to personalize</li>
-            <li>Customize their clothing purchases</li>
-          </ul>
+          <div className="prose prose-sm max-w-none text-gray-600">
+            {product.description ||
+              "No description available for this product."}
+          </div>
+          {product.features && product.features.length > 0 && (
+            <div className="mt-6">
+              <h4 className="text-sm font-semibold text-gray-900 mb-3">
+                Key Features
+              </h4>
+              <ul className="list-disc ps-5 space-y-1 text-gray-600">
+                {product.features.map((feature, i) => (
+                  <li key={i}>{feature}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       ),
     },
     {
       key: "details",
-      label: "Product Details",
+      label: "Details",
       content: (
-        <div className="space-y-2">
-          <p className="text-gray-700">
-            Brand: <span className="font-medium">{dummyProduct.brand}</span>
-          </p>
-          <p className="text-gray-700">
-            Reference:{" "}
-            <span className="font-medium">{dummyProduct.reference}</span>
-          </p>
-          <p className="text-gray-700">
-            Condition:{" "}
-            <span className="font-medium">{dummyProduct.condition}</span>
-          </p>
-          <p className="text-gray-700">
-            Category:{" "}
-            <span className="font-medium">{dummyProduct.category}</span>
-          </p>
+        <div className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <p className="text-gray-700">
+                Brand:{" "}
+                <span className="font-medium">{brandName || "N/A"}</span>
+              </p>
+              <p className="text-gray-700">
+                Category:{" "}
+                <span className="font-medium">{product.category}</span>
+              </p>
+              {product.reference && (
+                <p className="text-gray-700">
+                  Reference:{" "}
+                  <span className="font-medium">{product.reference}</span>
+                </p>
+              )}
+            </div>
+            {/* specifications mapping from backend */}
+            {product.specifications &&
+              (product.specifications as any[]).length > 0 && (
+                <div className="space-y-2">
+                  {(product.specifications as any[]).map((spec, i) => (
+                    <p key={i} className="text-gray-700">
+                      {spec.key}:{" "}
+                      <span className="font-medium">{spec.value}</span>
+                    </p>
+                  ))}
+                </div>
+              )}
+          </div>
         </div>
       ),
     },
@@ -182,48 +170,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             Shipping costs are calculated at checkout based on destination and
             weight.
           </p>
-        </div>
-      ),
-    },
-    {
-      key: "size",
-      label: "Size Chart",
-      content: (
-        <div className="space-y-3">
-          <p className="text-gray-600">
-            Use this chart as a reference. If you are between sizes, we
-            recommend sizing up.
-          </p>
-          <div className="overflow-x-auto">
-            <table className="min-w-[520px] w-full text-sm border border-gray-200 rounded-xl overflow-hidden">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="text-left p-3 font-medium text-gray-700">
-                    Size
-                  </th>
-                  <th className="text-left p-3 font-medium text-gray-700">
-                    Chest
-                  </th>
-                  <th className="text-left p-3 font-medium text-gray-700">
-                    Waist
-                  </th>
-                  <th className="text-left p-3 font-medium text-gray-700">
-                    Hip
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white">
-                {["Small", "Medium", "Large", "Extra Large"].map((s) => (
-                  <tr key={s} className="border-t border-gray-200">
-                    <td className="p-3 text-gray-700">{s}</td>
-                    <td className="p-3 text-gray-600">34–38</td>
-                    <td className="p-3 text-gray-600">28–32</td>
-                    <td className="p-3 text-gray-600">36–40</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </div>
       ),
     },
@@ -303,7 +249,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             {/* Quantity and Actions (reusable) */}
             <div className="mb-8 border-t border-gray-300 pt-4">
               <AddToCartPanel
-                productId={productView.cart.productId}
+                product={product}
                 inStock={productView.cart.inStock}
               />
             </div>
@@ -325,6 +271,11 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
         <div className="mb-16">
           <ProductInfoTabs tabs={tabs} defaultKey="description" />
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mb-16">
+          <ReviewsSection productId={product._id || product.id} />
         </div>
 
         {/* Related Products */}

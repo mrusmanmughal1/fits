@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Product } from "@/types";
 import { Badge, Button } from "@/components/ui";
 import { isEmoji } from "@/lib/utils";
+import { StarRating } from "./StarRating";
 
 export interface ProductCardProps extends Omit<
   Product,
@@ -24,13 +25,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   imageAlt,
   badge,
   badgeVariant = "primary",
+  averageRating,
+  reviewCount,
   onAddToCart,
   className = "",
 }) => {
   const hasSale = salePrice !== undefined && salePrice < price;
   const displayPrice = hasSale ? salePrice : price;
   const originalPrice = hasSale ? price : undefined;
-  const ProductImage = images?.[0] || "";
+  const ProductImage = images?.[0];
 
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -43,13 +46,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       <Link href={`/products/${id}`} className="block">
         <div className="relative">
           {ProductImage && (
-            <div className="overflow-hidden rounded-md p-4">
+            <div className="overflow-hidden h-48  rounded-md p-4">
               <Image
                 src={ProductImage}
                 alt={imageAlt || name}
-                width="400"
-                height="400"
-                className=" w-full object-contain rounded-md  "
+                className="object-contain  p-4"
+                fill
               />
             </div>
           )}
@@ -60,9 +62,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           )}
         </div>
         <div className="product-info pb-2">
-          <h3 className="product-title group-hover:text-primary transition-colors">
+          <h3 className="product-title h-10 group-hover:text-primary transition-colors mb-1">
             {name}
           </h3>
+          {averageRating !== undefined &&
+            reviewCount !== undefined &&
+            reviewCount > 0 && (
+              <div className="flex items-center justify-center gap-1 mb-2">
+                <StarRating rating={Math.round(averageRating)} size="sm" />
+                <span className="text-xs text-gray-500">({reviewCount})</span>
+              </div>
+            )}
           <div className="flex items-center justify-center gap-2">
             {originalPrice && (
               <span className="product-price-original">

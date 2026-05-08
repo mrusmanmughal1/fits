@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { Product } from "@/types";
 import { Badge, Button } from "@/components/ui";
 import { isEmoji } from "@/lib/utils";
+import { StarRating } from "./StarRating";
 
 interface ProductListItemProps {
   product: Product;
@@ -21,11 +22,6 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
   const displayPrice = hasSale ? product.salePrice : product.price;
   const originalPrice = hasSale ? product.price : undefined;
 
-  const isImageEmoji =
-    typeof product.image === "string" && isEmoji(product.image);
-  const isStaticImage =
-    typeof product.image === "object" && "src" in product.image;
-
   const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -36,22 +32,17 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
     <div className="group flex flex-col sm:flex-row items-stretch gap-4 bg-white border border-gray-200 rounded-3xl p-4 sm:p-5 shadow-sm hover:shadow-md hover:border-primary/30 transition">
       <Link
         href={`/products/${product.id}`}
-        className="flex flex-col sm:flex-row items-stretch gap-4 flex-1"
+        className="flex flex-col sm:flex-row items-center  justify-center gap-4 flex-1"
       >
         <div className="relative w-full sm:w-48 md:w-56 shrink-0 rounded-2xl bg-white border border-gray-100 overflow-hidden">
-          {isImageEmoji ? (
-            <div className="flex items-center justify-center text-7xl aspect-square">
-              {product.image as string}
-            </div>
-          ) : isStaticImage || typeof product.image === "string" ? (
+          <div className="w-full h-34">
             <Image
-              src={product.images?.[0] || ""}
+              src={product?.images?.[0] || ""}
               alt={product.imageAlt || product.name}
-              width={420}
-              height={420}
-              className="w-full aspect-square object-contain p-6"
+              fill
+              className="w-full  object-contain p-4"
             />
-          ) : null}
+          </div>
 
           {product.badge && (
             <Badge
@@ -68,6 +59,12 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
             <h3 className="text-base font-medium text-gray-900 group-hover:text-primary transition-colors">
               {product.name}
             </h3>
+            {product.averageRating !== undefined && product.reviewCount !== undefined && product.reviewCount > 0 && (
+              <div className="flex items-center gap-1">
+                <StarRating rating={Math.round(product.averageRating)} size="sm" />
+                <span className="text-sm text-gray-500">({product.reviewCount} reviews)</span>
+              </div>
+            )}
             {product.description && (
               <p
                 className="text-sm text-price leading-relaxed"
@@ -97,7 +94,7 @@ export const ProductListItem: React.FC<ProductListItemProps> = ({
       </Link>
 
       {onAddToCart && (
-        <div className="flex sm:items-end pb-1">
+        <div className="flex justify-center items-center  pb-1">
           <Button
             variant="outline"
             size="md"

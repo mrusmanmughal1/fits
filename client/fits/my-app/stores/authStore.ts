@@ -10,6 +10,7 @@ export type AuthUser = NonNullable<AuthResponse["user"]>;
 interface AuthState {
   user: AuthUser | null;
   isAuthenticated: boolean;
+  isHydrated: boolean;
 }
 
 interface AuthActions {
@@ -21,13 +22,15 @@ interface AuthActions {
   logout: () => void;
   /** Recompute auth state from stored token (useful on app start) */
   hydrateFromToken: () => void;
+  setHydrated: (state: boolean) => void;
 }
 
 export const useAuthStore = create<AuthState & AuthActions>()(
   persist(
     (set, get) => ({
       user: null,
-      isAuthenticated: Boolean(getAccessToken()),
+      isAuthenticated: false,
+      isHydrated: false,
 
       loginSuccess: (data) => {
         // tokens are saved by services/auth.ts via setAuthTokens()
@@ -48,11 +51,19 @@ export const useAuthStore = create<AuthState & AuthActions>()(
         const hasToken = Boolean(getAccessToken());
         set({ isAuthenticated: hasToken });
       },
+
+      setHydrated: (state) => set({ isHydrated: state }),
     }),
     {
       name: "fits_auth",
       storage: createJSONStorage(() => localStorage),
-      partialize: (state) => ({ user: state.user }),
+      partialize: (state) => ({
+        user: state.user,
+        isAuthenticated: state.isAuthenticated,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated(true);
+      },
     }
   )
 );

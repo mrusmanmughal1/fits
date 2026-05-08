@@ -10,9 +10,10 @@ import { CreateProductPayload } from "@/services/products";
 
 export default function NewProductPage() {
   const router = useRouter();
-  
+
   const { data: brands = [], isLoading: isLoadingBrands } = useBrands();
-  const { data: categories = [], isLoading: isLoadingCategories } = useCategories();
+  const { data: categories = [], isLoading: isLoadingCategories } =
+    useCategories();
   const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
 
   const handleSubmit = (data: CreateProductPayload) => {
@@ -22,27 +23,31 @@ export default function NewProductPage() {
       },
     });
   };
+  console.log(brands, "brands");
+  console.log(categories, "categories");
 
-  if (isLoadingBrands || isLoadingCategories) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // if (isLoadingBrands || isLoadingCategories) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-[60vh]">
+  //       <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="p-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Create Product</h1>
-        <p className="text-gray-500 mt-2">Add a new premium product to your electronics store.</p>
+        <p className="text-gray-500 mt-2">
+          Add a new premium product to your electronics store.
+        </p>
       </div>
-      
-      <ProductForm 
-        onSubmit={handleSubmit} 
-        isLoading={isCreating} 
-        brands={brands} 
-        categories={categories} 
+
+      <ProductForm
+        onSubmit={handleSubmit}
+        isLoading={isCreating}
+        brands={brands}
+        categories={categories}
       />
     </div>
   );

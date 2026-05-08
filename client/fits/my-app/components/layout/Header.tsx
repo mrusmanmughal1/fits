@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { NAV_LINKS, BRAND_TAGLINE, BRAND_NAME } from "@/constants";
 import Image from "next/image";
+import { useCartApi } from "@/hooks";
 import { useCart } from "@/contexts/CartContext";
 import { ShoppingCart } from "@/components/cart/ShoppingCart";
 import { useAuthStore } from "@/stores/authStore";
@@ -26,7 +27,9 @@ import { CategoryDropdown } from "./CategoryDropdown";
 export const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isMobileCategoriesOpen, setIsMobileCategoriesOpen] = useState(false);
-  const { openCart, getTotalItems } = useCart();
+  const { cart } = useCartApi();
+  const { openCart } = useCart();
+  const totalItems = cart?.totalQuantity || 0;
   const router = useRouter();
   const pathname = usePathname();
 
@@ -36,6 +39,25 @@ export const Header: React.FC = () => {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
+    }
+  };
+
+  useEffect(() => {
+    if (isSearchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [isSearchOpen]);
   useEffect(() => {
     const onClickOutside = (e: MouseEvent) => {
       if (!userMenuRef.current) return;
@@ -123,21 +145,78 @@ export const Header: React.FC = () => {
 
           {/* Right Icons */}
           <div className="flex items-center gap-4 w-full justify-end">
-            <button
-              className="p-2 text-gray-700 hover:text-primary transition-colors"
-              aria-label="Search"
+            <div
+              className={`flex items-center transition-all duration-300 ease-in-out ${
+                isSearchOpen
+                  ? "absolute right-0 top-1/2 -translate-y-1/2 w-[calc(100%-2rem)] md:w-[350px] z-10"
+                  : "relative w-10"
+              }`}
             >
-              <Search className="w-5 h-5" />
-            </button>
+              <form
+                onSubmit={handleSearchSubmit}
+                className="flex items-center w-full relative"
+              >
+                <input
+                  ref={searchInputRef}
+                  type="text"
+                  placeholder="Search products..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className={`w-full h-10 pl-10 pr-10 bg-white border border-gray-200 shadow-lg rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-300 ${
+                    isSearchOpen
+                      ? "opacity-100 visible"
+                      : "opacity-0 invisible w-0 border-none shadow-none"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setIsSearchOpen(!isSearchOpen)}
+                  className={`absolute left-0 p-2 text-gray-700 hover:text-primary transition-colors ${
+                    isSearchOpen ? "text-primary" : ""
+                  }`}
+                  aria-label="Toggle search"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
+                {isSearchOpen && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (searchQuery) {
+                        setSearchQuery("");
+                      } else {
+                        setIsSearchOpen(false);
+                      }
+                    }}
+                    className="absolute right-3 p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                )}
+              </form>
+            </div>
+
             <button
               onClick={() => openCart(true)}
               className="relative p-2 text-gray-700 hover:text-primary transition-colors"
               aria-label="Shopping cart"
             >
               <ShoppingCartIcon className="w-5 h-5" />
-              {getTotalItems() > 0 && (
-                <span className="absolute top-0 right-0 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                  {getTotalItems()}
+              {totalItems > 0 && (
+                <span className="absolute top-0 right-0 bg-primary text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                  {totalItems}
                 </span>
               )}
             </button>

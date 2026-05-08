@@ -2,13 +2,19 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Edit2, Trash2, Tag, FolderTree } from "lucide-react";
-import { Button, Badge, Pagination, DeleteConfirmModal, Loader } from "@/components/ui";
+import { Plus, Search, Edit2, Trash2, Tag } from "lucide-react";
+import {
+  Button,
+  Badge,
+  Pagination,
+  DeleteConfirmModal,
+  Loader,
+} from "@/components/ui";
 import {
   useAdminCategories,
   useDeleteCategory,
 } from "@/hooks/Categories/useAdminCategories";
-import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 export default function AdminCategoriesPage() {
   const [page, setPage] = useState(1);
@@ -34,10 +40,10 @@ export default function AdminCategoriesPage() {
   const total = data?.total || 0;
 
   return (
-    <div className="p-8 space-y-6">
+    <div className="p-2 space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Categories</h1>
+          <h1 className="text-xl font-bold text-gray-900">Categories</h1>
           <p className="text-gray-500 mt-1">
             Manage product categories and taxonomies.
           </p>
@@ -56,7 +62,7 @@ export default function AdminCategoriesPage() {
           <input
             type="text"
             placeholder="Search categories..."
-            className="w-full pl-12 pr-4 py-3 bg-gray-50 border-none rounded-xl focus:ring-2 focus:ring-primary/20 transition-all"
+            className="w-full pl-12 pr-4 py-1 bg-gray-50 border-none rounded-xl focus:outline-none transition-all"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -93,15 +99,20 @@ export default function AdminCategoriesPage() {
                   </td>
                 </tr>
               ) : (
-                categories.map((category) => (
+                categories.map((category, index) => (
                   <tr
-                    key={category.id}
+                    key={category.id || index}
                     className="hover:bg-gray-50 transition-colors group"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
                         <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                          <FolderTree className="w-5 h-5" />
+                          <Image
+                            src={category?.image}
+                            alt={category?.name}
+                            width={100}
+                            height={100}
+                          />
                         </div>
                         <div>
                           <p className="font-bold text-gray-900 group-hover:text-primary transition-colors">

@@ -110,11 +110,12 @@ export default function AdminProductsPage() {
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-4">
-                        {product.images?.[0]}
                         <div className="w-12 h-12 rounded-lg bg-gray-100 overflow-hidden border border-gray-100">
                           <Image
-                            src={product.images?.[0] || ""}
-                            alt={product.name}
+                            src={product.images?.[0]}
+                            alt={product.name.slice(0, 10)}
+                            width={50}
+                            height={50}
                             className="w-full h-full object-contain"
                             onError={(e) =>
                               (e.currentTarget.src =

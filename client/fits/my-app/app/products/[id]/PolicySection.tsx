@@ -28,7 +28,6 @@ const policies: PolicyItem[] = [
 ];
 
 const paymentMethods = [
-  { name: "MasterCard", label: "MasterCard" },
   { name: "Discover", label: "Discover" },
   { name: "PayPal", label: "PayPal" },
   { name: "VISA", label: "VISA" },

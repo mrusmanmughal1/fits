@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, Image as ImageIcon, PlusCircle, Check, X, LayoutGrid, FileText, Settings, Tag } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Image as ImageIcon,
+  PlusCircle,
+  Check,
+  X,
+  LayoutGrid,
+  FileText,
+  Settings,
+  Tag,
+} from "lucide-react";
 import { Button, Input, Select, Textarea } from "@/components/ui";
 import { CreateProductPayload } from "@/services/products";
 import { Brand } from "@/services/brands";
@@ -23,6 +34,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
   brands,
   categories,
 }) => {
+  const BrandsData = brands.data;
+  console.log(BrandsData, "brands");
+  console.log(categories, "categories");
   const [formData, setFormData] = useState<Partial<CreateProductPayload>>({
     name: "",
     slug: "",
@@ -40,7 +54,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     ...initialData,
   });
 
-  const [activeTab, setActiveTab] = useState<"general" | "details" | "media" | "inventory">("general");
+  const [activeTab, setActiveTab] = useState<
+    "general" | "details" | "media" | "inventory"
+  >("general");
 
   // Auto-slug generation
   useEffect(() => {
@@ -53,13 +69,21 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     }
   }, [formData.name, initialData]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >,
+  ) => {
     const { name, value, type } = e.target;
     const val = type === "number" ? parseFloat(value) : value;
     setFormData((prev) => ({ ...prev, [name]: val }));
   };
 
-  const handleArrayChange = (index: number, value: string, field: "images" | "features") => {
+  const handleArrayChange = (
+    index: number,
+    value: string,
+    field: "images" | "features",
+  ) => {
     const newArr = [...(formData[field] || [])];
     newArr[index] = value;
     setFormData((prev) => ({ ...prev, [field]: newArr }));
@@ -75,7 +99,11 @@ export const ProductForm: React.FC<ProductFormProps> = ({
     setFormData((prev) => ({ ...prev, [field]: newArr }));
   };
 
-  const handleSpecChange = (index: number, field: "key" | "value", value: string) => {
+  const handleSpecChange = (
+    index: number,
+    field: "key" | "value",
+    value: string,
+  ) => {
     const newSpecs = [...(formData.specifications || [])];
     newSpecs[index] = { ...newSpecs[index], [field]: value };
     setFormData((prev) => ({ ...prev, specifications: newSpecs }));
@@ -114,10 +142,16 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           <h2 className="text-xl font-bold text-gray-900">
             {initialData ? "Edit Product" : "Add New Product"}
           </h2>
-          <p className="text-sm text-gray-500">Fill in the details to list your product in the store.</p>
+          <p className="text-sm text-gray-500">
+            Fill in the details to list your product in the store.
+          </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" type="button" onClick={() => window.history.back()}>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => window.history.back()}
+          >
             Cancel
           </Button>
           <Button type="submit" isLoading={isLoading}>
@@ -141,7 +175,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     "w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all",
                     activeTab === tab.id
                       ? "bg-primary/10 text-primary"
-                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                      : "text-gray-500 hover:bg-gray-50 hover:text-gray-900",
                   )}
                 >
                   <Icon className="w-5 h-5" />
@@ -198,7 +232,12 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   name="brand"
                   value={formData.brand}
                   onChange={handleChange}
-                  options={brands.map((b) => ({ label: b.name, value: b._id }))}
+                  options={BrandsData?.map(
+                    (b: { name: string; _id: string }) => ({
+                      label: b.name,
+                      value: b._id,
+                    }),
+                  )}
                   required
                 />
               </div>
@@ -209,10 +248,18 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                   id="isFeatured"
                   name="isFeatured"
                   checked={formData.isFeatured}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, isFeatured: e.target.checked }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      isFeatured: e.target.checked,
+                    }))
+                  }
                   className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
                 />
-                <label htmlFor="isFeatured" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="isFeatured"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Feature this product on the homepage
                 </label>
               </div>
@@ -224,19 +271,31 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {/* Specifications */}
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-bold text-gray-900">Technical Specifications</h3>
-                  <Button variant="outline" size="sm" onClick={addSpec} type="button">
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Technical Specifications
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addSpec}
+                    type="button"
+                  >
                     <Plus className="w-4 h-4 mr-2" /> Add Spec
                   </Button>
                 </div>
                 <div className="space-y-4">
                   {formData.specifications?.map((spec, index) => (
-                    <div key={index} className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl">
+                    <div
+                      key={index}
+                      className="flex gap-4 items-end bg-gray-50 p-4 rounded-xl"
+                    >
                       <div className="flex-1">
                         <Input
                           label={index === 0 ? "Key" : ""}
                           value={spec.key}
-                          onChange={(e) => handleSpecChange(index, "key", e.target.value)}
+                          onChange={(e) =>
+                            handleSpecChange(index, "key", e.target.value)
+                          }
                           placeholder="e.g. Color"
                         />
                       </div>
@@ -244,7 +303,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                         <Input
                           label={index === 0 ? "Value" : ""}
                           value={spec.value}
-                          onChange={(e) => handleSpecChange(index, "value", e.target.value)}
+                          onChange={(e) =>
+                            handleSpecChange(index, "value", e.target.value)
+                          }
                           placeholder="e.g. Titanium"
                         />
                       </div>
@@ -265,8 +326,15 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               {/* Features */}
               <div>
                 <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-lg font-bold text-gray-900">Key Features</h3>
-                  <Button variant="outline" size="sm" onClick={() => addArrayItem("features")} type="button">
+                  <h3 className="text-lg font-bold text-gray-900">
+                    Key Features
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => addArrayItem("features")}
+                    type="button"
+                  >
                     <Plus className="w-4 h-4 mr-2" /> Add Feature
                   </Button>
                 </div>
@@ -275,7 +343,9 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     <div key={index} className="flex gap-4 items-center">
                       <Input
                         value={feature}
-                        onChange={(e) => handleArrayChange(index, e.target.value, "features")}
+                        onChange={(e) =>
+                          handleArrayChange(index, e.target.value, "features")
+                        }
                         placeholder="e.g. Water resistant up to 50m"
                       />
                       <button
@@ -295,21 +365,33 @@ export const ProductForm: React.FC<ProductFormProps> = ({
           {activeTab === "media" && (
             <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 space-y-8 animate-in fade-in slide-in-from-bottom-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-bold text-gray-900">Product Images</h3>
-                <Button variant="outline" size="sm" onClick={() => addArrayItem("images")} type="button">
+                <h3 className="text-lg font-bold text-gray-900">
+                  Product Images
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => addArrayItem("images")}
+                  type="button"
+                >
                   <Plus className="w-4 h-4 mr-2" /> Add Image URL
                 </Button>
               </div>
-              
+
               <div className="grid grid-cols-1 gap-6">
                 {formData.images?.map((url, index) => (
-                  <div key={index} className="bg-gray-50 p-6 rounded-2xl space-y-4">
+                  <div
+                    key={index}
+                    className="bg-gray-50 p-6 rounded-2xl space-y-4"
+                  >
                     <div className="flex gap-4 items-center">
                       <div className="flex-1">
                         <Input
                           label={`Image URL #${index + 1}`}
                           value={url}
-                          onChange={(e) => handleArrayChange(index, e.target.value, "images")}
+                          onChange={(e) =>
+                            handleArrayChange(index, e.target.value, "images")
+                          }
                           placeholder="https://example.com/image.jpg"
                         />
                       </div>
@@ -323,11 +405,14 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </div>
                     {url && (
                       <div className="relative w-40 h-40 rounded-xl overflow-hidden border border-gray-200 bg-white group">
-                        <img 
-                          src={url} 
-                          alt={`Preview ${index + 1}`} 
+                        <img
+                          src={url}
+                          alt={`Preview ${index + 1}`}
                           className="w-full h-full object-contain"
-                          onError={(e) => (e.currentTarget.src = "https://placehold.co/400x400?text=Invalid+Image")}
+                          onError={(e) =>
+                            (e.currentTarget.src =
+                              "https://placehold.co/400x400?text=Invalid+Image")
+                          }
                         />
                       </div>
                     )}

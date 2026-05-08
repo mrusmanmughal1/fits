@@ -1,3 +1,4 @@
+"use client";
 import {
   Hero,
   ProductShowcase,
@@ -8,82 +9,32 @@ import {
   Blog,
   Newsletter,
 } from "@/components";
-import { Product } from "@/types";
+import { useProducts } from "@/hooks/Products/useProducts";
 import { SERVICE_GUARANTEES } from "@/constants";
-import headphone from "@/public/images/mouse.webp";
-
-// Sample product data
-const newProducts: Product[] = [
-  {
-    id: "1",
-    name: "Wireless Headphones",
-    price: 199.99,
-    image: headphone,
-  },
-  {
-    id: "2",
-    name: "Gaming Mouse",
-    price: 79.99,
-    image: headphone,
-  },
-  {
-    id: "3",
-    name: "Wireless Earbuds",
-    price: 129.99,
-    image: headphone,
-  },
-  {
-    id: "4",
-    name: "iPhone 15 Pro",
-    price: 999.99,
-    salePrice: 899.99,
-    image: headphone,
-    badge: "Sale",
-  },
-  {
-    id: "5",
-    name: "Apple Watch",
-    price: 399.99,
-    image: headphone,
-  },
-];
-
-const featuredProducts: Product[] = [
-  {
-    id: "6",
-    name: "Mechanical Keyboard",
-    price: 149.99,
-    image: headphone,
-  },
-  {
-    id: "7",
-    name: "4K Monitor",
-    price: 499.99,
-    salePrice: 399.99,
-    image: headphone,
-    badge: "Sale",
-  },
-  {
-    id: "8",
-    name: "Webcam HD",
-    price: 89.99,
-    image: headphone,
-  },
-  {
-    id: "9",
-    name: "USB-C Hub",
-    price: 59.99,
-    image: headphone,
-  },
-  {
-    id: "10",
-    name: "Laptop Stand",
-    price: 49.99,
-    image: headphone,
-  },
-];
 
 export default function Home() {
+  const { data: newProductsData, isLoading: loadingNew } = useProducts({
+    limit: 10,
+    // You can add more filters here if needed
+  });
+
+  const { data: featuredProductsData, isLoading: loadingFeatured } =
+    useProducts({
+      limit: 10,
+      isFeatured: true,
+    });
+
+  const newProducts = newProductsData?.data || [];
+  const featuredProducts = featuredProductsData?.data || [];
+
+  if (loadingNew || loadingFeatured) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen  ">
       <Hero />

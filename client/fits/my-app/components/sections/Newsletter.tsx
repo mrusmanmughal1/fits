@@ -1,23 +1,23 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui';
+import React, { useState } from "react";
+import { Button } from "@/components/ui";
 
 export const Newsletter: React.FC = () => {
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Newsletter signup:', email);
-    setEmail('');
+    console.log("Newsletter signup:", email);
+    setEmail("");
   };
 
   return (
-    <section className="py-8  ">
+    <section className="py-16  ">
       <div className="container mx-auto px-4">
         <div className="max-w-[60%] mx-auto">
           {/* White rounded container */}
-          <div className="bg-white rounded-4xl p-8 lg:p-12 shadow">
+          <div className="bg-white rounded-4xl  shadow  p-8 lg:p-12  ">
             <div className="text-center">
               {/* Envelope Icon */}
               <div className="flex justify-center mb-6">
@@ -49,7 +49,10 @@ export const Newsletter: React.FC = () => {
               </p>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row relative gap-3">
+              <form
+                onSubmit={handleSubmit}
+                className="flex flex-col sm:flex-row relative gap-3"
+              >
                 <input
                   type="email"
                   value={email}
